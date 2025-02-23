@@ -34,11 +34,11 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
 * **Data Handling with SQLite and R**
   * **SQLite** : The data is imported from a tab-delimited file into an SQLite database. This allows efficient querying of the data for use within the Shiny application.
   * **R data frames** : Data is retrieved from the SQLite database and stored in R data frames for analysis and visualization.
-  * **Data visualisation with ggplot2**
-    * **Line plots** : Used to display the trend of steps, calories burned, and hours of sleep over time.
-    * **Pie charts** : Used to visualise the distribution of mood and activity levels.
-  * **Shiny UI and server**
-    * **UI layout**: The dashboard is organised into tabs, with each tab representing a different health metric.
+* **Data visualisation with ggplot2**
+  * **Line plots** : Used to display the trend of steps, calories burned, and hours of sleep over time.
+  * **Pie charts** : Used to visualise the distribution of mood and activity levels.
+* **Shiny UI and server**
+  * **UI layout**: The dashboard is organised into tabs, with each tab representing a different health metric.
   * **Date range filters** : Users can select date ranges or specific dates to view data for a selected period.
   * **Reactive data** : The app reacts to user inputs (such as date selection) and dynamically updates visualisations.
 
