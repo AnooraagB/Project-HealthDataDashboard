@@ -4,15 +4,15 @@ This project involves developing an interactive **Health Data Dashboard** using 
 
 ## Features
 
-* **Interactive data visualizations** : The dashboard uses various interactive visualisations to display health data, such as line graphs and pie charts.
+* **Interactive data visualisations** : The dashboard uses various interactive visualisations to display health data, such as line graphs and pie charts.
 * **Data filters** : Users can filter data by date range for a more personalised experience.
 * **Multiple health metrics** : Displays metrics such as steps, mood, calories burned, sleep hours, and activity levels.
 * **Shiny application** : A fully interactive User Interactive (UI) built using RShiny, enabling easy navigation between different health metrics.
 
 ## Tools and Technologies Used
 
-* **R Programming** : The project is implemented using R for data manipulation and visualization.
-* **RShiny** : Used to create an interactive web dashboard with various tabs and visualizations.
+* **R Programming** : The project is implemented using R for data manipulation and visualisation.
+* **RShiny** : Used to create an interactive web dashboard with various tabs and visualisations.
 * **SQLite** : An SQLite database is used to store and manage health data efficiently.
 * **ggplot2** : Used for plotting line graphs and pie charts for the various health metrics.
 * **Shinydashboard** : Used for creating the layout of the dashboard with menus, boxes, and tabs.
@@ -57,15 +57,14 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
     * shinyWidgets
     * lubridate
     * dplyr
-     * To install these, use the following code :
-    
-     ```
-     install.packages(c("readr", "RSQLite", "DBI", "shiny", "ggplot2", "DT", "shinydashboard", "shinyWidgets", "lubridate", "dplyr"))
-     ```
+  * To install these packages, use the following code :\
+    ```
+    install.packages(c("readr", "RSQLite", "DBI", "shiny", "ggplot2", "DT", "shinydashboard", "shinyWidgets", "lubridate", "dplyr"))
+    ```
 * **Running the dashboard**
   * Clone the repository to your local machine.
   * Place the fit.txt data file in the project directory.
-  * Run the following code to launch the Shiny application :
+  * Run the following code to launch the Shiny application :\
   
   ```
   shiny::runApp("path/to/your/project")
