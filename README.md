@@ -57,14 +57,16 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
     * shinyWidgets
     * lubridate
     * dplyr
-  * To install these packages, use the following code :<br>
+  * To install these packages, use the following code :
+    <br>
     ```
     install.packages(c("readr", "RSQLite", "DBI", "shiny", "ggplot2", "DT", "shinydashboard", "shinyWidgets", "lubridate", "dplyr"))
     ```
 * **Running the dashboard**
   * Clone the repository to your local machine.
   * Place the fit.txt data file in the project directory.
-  * Run the following code to launch the Shiny application :<br>
+  * Run the following code to launch the Shiny application :
+  <br>
   ```
   shiny::runApp("path/to/your/project")
   ```
