@@ -1,141 +1,183 @@
-# Load necessary libraries
 library(shiny)
-library(DBI)
-library(RSQLite)
-library(dplyr)
 library(ggplot2)
+library(DT)
 library(shinydashboard)
+library(shinyWidgets)
+library(lubridate)
+library(RSQLite)
+library(DBI)
+library(dplyr)
 
-# Define Server Logic
-server <- function(input, output, session) {
-  con <- dbConnect(RSQLite::SQLite(), "healthdashboard.db")
-  
-  fetch_data <- function(query) {
-    dbGetQuery(con, query)
-  }
-  
-  # Activity Data
-  output$activity_plot <- renderPlot({
-    req(input$activity_update)
-    data <- fetch_data(paste("SELECT ActivityDate,", input$activity_metric, "FROM dailyActivity_merged",
-                             "WHERE ActivityDate BETWEEN '", input$activity_date[1], "' AND '", input$activity_date[2], "'"))
-    ggplot(data, aes(x = ActivityDate, y = get(input$activity_metric))) + geom_line() + theme_minimal()
-  })
-  
-  # Heart Rate Data
-  output$hr_plot <- renderPlot({
-    req(input$hr_update)
-    data <- fetch_data(paste("SELECT Time, HeartRate FROM heartrate_seconds_merged",
-                             "WHERE Time BETWEEN '", input$hr_date[1], "' AND '", input$hr_date[2], "'"))
-    ggplot(data, aes(x = Time, y = HeartRate)) + geom_line() + theme_minimal()
-  })
-  
-  # Calories Data
-  output$cal_plot <- renderPlot({
-    req(input$cal_update)
-    data <- fetch_data(paste("SELECT ActivityDate, Calories FROM dailyCalories_merged",
-                             "WHERE ActivityDate BETWEEN '", input$cal_date[1], "' AND '", input$cal_date[2], "'"))
-    ggplot(data, aes(x = ActivityDate, y = Calories)) + geom_line() + theme_minimal()
-  })
-  
-  # Sleep Data
-  output$sleep_plot <- renderPlot({
-    req(input$sleep_update)
-    data <- fetch_data(paste("SELECT SleepDay, TotalMinutesAsleep FROM sleepDay_merged",
-                             "WHERE SleepDay BETWEEN '", input$sleep_date[1], "' AND '", input$sleep_date[2], "'"))
-    ggplot(data, aes(x = SleepDay, y = TotalMinutesAsleep)) + geom_line() + theme_minimal()
-  })
-  
-  # Weight Data
-  output$weight_plot <- renderPlot({
-    req(input$weight_update)
-    data <- fetch_data(paste("SELECT Date, WeightKg FROM weightLogInfo_merged",
-                             "WHERE Date BETWEEN '", input$weight_date[1], "' AND '", input$weight_date[2], "'"))
-    ggplot(data, aes(x = Date, y = WeightKg)) + geom_line() + theme_minimal()
-  })
-  
-  onStop(function() { dbDisconnect(con) })
-}
+# SQLite database connection
+con <- dbConnect(RSQLite::SQLite(), "healthdashboard.db")
 
-# Define UI
+# Read data from SQLite database
+data <- dbGetQuery(con, "SELECT * FROM fit_data")
+
+# Ensure column names are correct
+colnames(data) <- gsub("^#", "", colnames(data))
+
+# Convert the date column properly
+data$date <- as.character(data$date)  # Ensure it's character first
+data$date <- as.Date(data$date, format="%d-%m-%Y")  # Convert to Date
+
+# Get min and max dates
+min_date <- min(data$date)
+max_date <- max(data$date)
+
+# Close the database connection
+dbDisconnect(con)
+
+# UI
 ui <- dashboardPage(
-  dashboardHeader(title = "Fitbit Health Dashboard"),
+  dashboardHeader(title = "Fitbit Dashboard"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Activity", tabName = "activity", icon = icon("running")),
-      menuItem("Heart Rate", tabName = "heartrate", icon = icon("heartbeat")),
+      menuItem("Steps", tabName = "steps", icon = icon("shoe-prints")),
+      menuItem("Mood", tabName = "mood", icon = icon("smile")),
       menuItem("Calories", tabName = "calories", icon = icon("fire")),
-      menuItem("Sleep", tabName = "sleep", icon = icon("bed")),
-      menuItem("Weight & BMI", tabName = "weight", icon = icon("weight"))
+      menuItem("Hours of Sleep", tabName = "sleep", icon = icon("bed")),
+      menuItem("Activity", tabName = "activity", icon = icon("running"))
     )
   ),
   dashboardBody(
     tabItems(
-      # Activity Tab
-      tabItem(tabName = "activity",
+      # Steps Tab
+      tabItem(tabName = "steps",
               fluidRow(
-                box(title = "Filters", status = "primary", solidHeader = TRUE, 
-                    selectInput("activity_metric", "Select Activity:",
-                                choices = c("TotalSteps", "TotalDistance", "VeryActiveMinutes")),
-                    dateRangeInput("activity_date", "Date Range:",
-                                   start = "2016-01-01", end = Sys.Date()),
-                    actionButton("activity_update", "Update View")
-                ),
-                box(title = "Activity Trends", status = "info", solidHeader = TRUE, 
-                    plotOutput("activity_plot"))
+                box(title = "Steps Over Time", width = 12, status = "primary",
+                    dateRangeInput("steps_date", "Select Date Range:",
+                                   start = min_date, end = max_date,
+                                   min = min_date, max = max_date),
+                    plotOutput("steps_plot"))
               )
       ),
-      # Heart Rate Tab
-      tabItem(tabName = "heartrate",
+      # Mood Tab
+      tabItem(tabName = "mood",
               fluidRow(
-                box(title = "Filters", status = "primary", solidHeader = TRUE, 
-                    dateRangeInput("hr_date", "Date Range:",
-                                   start = "2016-01-01", end = Sys.Date()),
-                    actionButton("hr_update", "Update View")
-                ),
-                box(title = "Heart Rate Trends", status = "info", solidHeader = TRUE, 
-                    plotOutput("hr_plot"))
+                box(title = "Mood Analysis", width = 6, status = "primary",
+                    dateInput("mood_date", "Select Specific Date:", value = max_date,
+                              min = min_date, max = max_date),
+                    plotOutput("mood_pie")),
+                box(title = "Monthly Mood Distribution", width = 6, status = "primary",
+                    selectInput("mood_month", "Select Month & Year:",
+                                choices = unique(format(data$date, "%Y-%m")),
+                                selected = format(max_date, "%Y-%m")),
+                    plotOutput("mood_monthly_pie"))
               )
       ),
       # Calories Tab
       tabItem(tabName = "calories",
               fluidRow(
-                box(title = "Filters", status = "primary", solidHeader = TRUE, 
-                    dateRangeInput("cal_date", "Date Range:",
-                                   start = "2016-01-01", end = Sys.Date()),
-                    actionButton("cal_update", "Update View")
-                ),
-                box(title = "Calories Burned", status = "info", solidHeader = TRUE, 
-                    plotOutput("cal_plot"))
+                box(title = "Calories Burned Over Time", width = 12, status = "primary",
+                    dateRangeInput("calories_date", "Select Date Range:",
+                                   start = min_date, end = max_date,
+                                   min = min_date, max = max_date),
+                    plotOutput("calories_plot"))
               )
       ),
-      # Sleep Tab
+      # Hours of Sleep Tab
       tabItem(tabName = "sleep",
               fluidRow(
-                box(title = "Filters", status = "primary", solidHeader = TRUE, 
-                    dateRangeInput("sleep_date", "Date Range:",
-                                   start = "2016-01-01", end = Sys.Date()),
-                    actionButton("sleep_update", "Update View")
-                ),
-                box(title = "Sleep Patterns", status = "info", solidHeader = TRUE, 
+                box(title = "Hours of Sleep Over Time", width = 12, status = "primary",
+                    dateRangeInput("sleep_date", "Select Date Range:",
+                                   start = min_date, end = max_date,
+                                   min = min_date, max = max_date),
                     plotOutput("sleep_plot"))
               )
       ),
-      # Weight Tab
-      tabItem(tabName = "weight",
+      # Activity Tab
+      tabItem(tabName = "activity",
               fluidRow(
-                box(title = "Filters", status = "primary", solidHeader = TRUE, 
-                    dateRangeInput("weight_date", "Date Range:",
-                                   start = "2016-01-01", end = Sys.Date()),
-                    actionButton("weight_update", "Update View")
-                ),
-                box(title = "Weight & BMI", status = "info", solidHeader = TRUE, 
-                    plotOutput("weight_plot"))
+                box(title = "Activity Level", width = 6, status = "primary",
+                    dateInput("activity_date", "Select Specific Date:", value = max_date,
+                              min = min_date, max = max_date),
+                    plotOutput("activity_pie")),
+                box(title = "Monthly Activity Distribution", width = 6, status = "primary",
+                    selectInput("activity_month", "Select Month & Year:",
+                                choices = unique(format(data$date, "%Y-%m")),
+                                selected = format(max_date, "%Y-%m")),
+                    plotOutput("activity_monthly_pie"))
               )
       )
     )
   )
 )
 
-# Run App
+# Server
+server <- function(input, output) {
+  
+  # Filtered dataset based on date input
+  filtered_data <- reactive({
+    data
+  })
+  
+  # Steps plot
+  output$steps_plot <- renderPlot({
+    filtered_steps <- data %>% filter(date >= input$steps_date[1] & date <= input$steps_date[2])
+    ggplot(filtered_steps, aes(x = date, y = step_count)) +
+      geom_line(color = "blue") +
+      labs(title = "Steps Over Time", x = "Date", y = "Step Count")
+  })
+  
+  # Mood Pie Chart (Specific Date)
+  output$mood_pie <- renderPlot({
+    mood_data <- data %>% filter(date == input$mood_date)
+    ggplot(mood_data, aes(x = "", fill = mood)) +
+      geom_bar(width = 1, stat = "count") +
+      coord_polar("y") +
+      labs(title = paste("Mood Distribution on", input$mood_date), fill = "Mood") +
+      theme_void()
+  })
+  
+  # Mood Pie Chart (Monthly)
+  output$mood_monthly_pie <- renderPlot({
+    monthly_data <- data %>%
+      filter(format(date, "%Y-%m") == input$mood_month)
+    ggplot(monthly_data, aes(x = "", fill = mood)) +
+      geom_bar(width = 1, stat = "count") +
+      coord_polar("y") +
+      labs(title = paste("Mood Distribution in", input$mood_month), fill = "Mood") +
+      theme_void()
+  })
+  
+  # Calories plot
+  output$calories_plot <- renderPlot({
+    filtered_calories <- data %>% filter(date >= input$calories_date[1] & date <= input$calories_date[2])
+    ggplot(filtered_calories, aes(x = date, y = calories_burned)) +
+      geom_line(color = "red") +
+      labs(title = "Calories Burned Over Time", x = "Date", y = "Calories Burned")
+  })
+  
+  # Sleep plot
+  output$sleep_plot <- renderPlot({
+    filtered_sleep <- data %>% filter(date >= input$sleep_date[1] & date <= input$sleep_date[2])
+    ggplot(filtered_sleep, aes(x = date, y = hours_of_sleep)) +
+      geom_line(color = "purple") +
+      labs(title = "Hours of Sleep Over Time", x = "Date", y = "Hours of Sleep")
+  })
+  
+  # Activity Pie Chart (Specific Date)
+  output$activity_pie <- renderPlot({
+    activity_data <- data %>% filter(date == input$activity_date)
+    ggplot(activity_data, aes(x = "", fill = active)) +
+      geom_bar(width = 1, stat = "count") +
+      coord_polar("y") +
+      labs(title = paste("Activity Level on", input$activity_date), fill = "Activity") +
+      theme_void()
+  })
+  
+  # Activity Pie Chart (Monthly)
+  output$activity_monthly_pie <- renderPlot({
+    monthly_data <- data %>%
+      filter(format(date, "%Y-%m") == input$activity_month)
+    ggplot(monthly_data, aes(x = "", fill = active)) +
+      geom_bar(width = 1, stat = "count") +
+      coord_polar("y") +
+      labs(title = paste("Activity Distribution in", input$activity_month), fill = "Activity") +
+      theme_void()
+  })
+}
+
+# Run the application
 shinyApp(ui = ui, server = server)
