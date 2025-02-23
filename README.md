@@ -21,13 +21,12 @@ This project involves developing an interactive **Health Data Dashboard** using 
 
 ## Dataset used
 
-The dataset used in this project is Fitbit data file obtained from Kaggle, including various health metrics such as:
+The data is stored in a tab-delimited file (fit.txt) and then imported into an SQLite database (healthdashboard.db) for efficient querying and manipulation and the dataset used in this project is a Fitbit data file obtained from Kaggle (https://www.kaggle.com/datasets/devarajv88/fitbit-dataset), including various health metrics such as:
 1. Steps
 2. Mood
 3. Calories burned
 4. Hours of sleep
 5. Activity levels
-The data is stored in a tab-delimited file (fit.txt) and then imported into an SQLite database (healthdashboard.db) for efficient querying and manipulation.
 
 ## Concepts used
 
