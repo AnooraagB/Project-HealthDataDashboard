@@ -33,15 +33,29 @@ ui <- dashboardPage(
   dashboardHeader(title = "Fitbit Dashboard"),
   dashboardSidebar(
     sidebarMenu(
+      menuItem("Home", tabName = "home", icon = icon("home")),  # Home menu item
       menuItem("Steps", tabName = "steps", icon = icon("shoe-prints")),
       menuItem("Mood", tabName = "mood", icon = icon("smile")),
       menuItem("Calories", tabName = "calories", icon = icon("fire")),
       menuItem("Hours of Sleep", tabName = "sleep", icon = icon("bed")),
-      menuItem("Activity", tabName = "activity", icon = icon("running"))
+      menuItem("Activity", tabName = "activity", icon = icon("running")),
+      menuItem("Full Data", tabName = "full_data", icon = icon("database"))  # Full data menu item
     )
   ),
   dashboardBody(
     tabItems(
+      # Home Tab
+      tabItem(tabName = "home", 
+              fluidRow(
+                box(title = strong("Welcome to the Fitbit Health Data Dashboard"), width = 12, status = "primary",
+                    p("by MyName"),
+                    p("How to use:"),
+                    p("1. Use the menu on the left to navigate between different data views (Steps, Mood, Calories, Sleep, Activity)."),
+                    p("2. Select the desired date range or specific date to filter the data."),
+                    p("3. Visualizations will be updated dynamically based on your selections.")
+                )
+              )
+      ),
       # Steps Tab
       tabItem(tabName = "steps",
               fluidRow(
@@ -105,6 +119,14 @@ ui <- dashboardPage(
                                 choices = unique(format(data$date, "%Y-%m")),
                                 selected = format(max_date, "%Y-%m")),
                     plotOutput("activity_monthly_pie")
+                )
+              )
+      ),
+      # Full Data Tab (New)
+      tabItem(tabName = "full_data",
+              fluidRow(
+                box(title = "Full Fitbit Data", width = 12, status = "primary",
+                    DTOutput("full_data_table")  # Display the data in a table
                 )
               )
       )
@@ -174,6 +196,11 @@ server <- function(input, output) {
       coord_polar("y") +
       labs(title = paste("Activity Distribution in", input$activity_month), fill = "Activity") +
       theme_void()
+  })
+  
+  # Full Data Table
+  output$full_data_table <- renderDT({
+    datatable(data)  # Display the entire data in a table format
   })
 }
 
