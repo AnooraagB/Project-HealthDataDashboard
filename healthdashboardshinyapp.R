@@ -55,15 +55,19 @@ ui <- dashboardPage(
       # Mood Tab
       tabItem(tabName = "mood",
               fluidRow(
-                box(title = "Mood Analysis", width = 6, status = "primary",
+                box(title = "Mood on Selected Date", width = 12, status = "primary",
                     dateInput("mood_date", "Select Specific Date:", value = max_date,
                               min = min_date, max = max_date),
-                    plotOutput("mood_pie")),
-                box(title = "Monthly Mood Distribution", width = 6, status = "primary",
+                    uiOutput("mood_display")
+                )
+              ),
+              fluidRow(
+                box(title = "Monthly Mood Distribution", width = 12, status = "primary",
                     selectInput("mood_month", "Select Month & Year:",
                                 choices = unique(format(data$date, "%Y-%m")),
                                 selected = format(max_date, "%Y-%m")),
-                    plotOutput("mood_monthly_pie"))
+                    plotOutput("mood_monthly_pie")
+                )
               )
       ),
       # Calories Tab
@@ -89,15 +93,19 @@ ui <- dashboardPage(
       # Activity Tab
       tabItem(tabName = "activity",
               fluidRow(
-                box(title = "Activity Level", width = 6, status = "primary",
+                box(title = "Activity on Selected Date", width = 12, status = "primary",
                     dateInput("activity_date", "Select Specific Date:", value = max_date,
                               min = min_date, max = max_date),
-                    plotOutput("activity_pie")),
-                box(title = "Monthly Activity Distribution", width = 6, status = "primary",
+                    uiOutput("activity_display")
+                )
+              ),
+              fluidRow(
+                box(title = "Monthly Activity Distribution", width = 12, status = "primary",
                     selectInput("activity_month", "Select Month & Year:",
                                 choices = unique(format(data$date, "%Y-%m")),
                                 selected = format(max_date, "%Y-%m")),
-                    plotOutput("activity_monthly_pie"))
+                    plotOutput("activity_monthly_pie")
+                )
               )
       )
     )
@@ -106,12 +114,6 @@ ui <- dashboardPage(
 
 # Server
 server <- function(input, output) {
-  
-  # Filtered dataset based on date input
-  filtered_data <- reactive({
-    data
-  })
-  
   # Steps plot
   output$steps_plot <- renderPlot({
     filtered_steps <- data %>% filter(date >= input$steps_date[1] & date <= input$steps_date[2])
@@ -120,20 +122,18 @@ server <- function(input, output) {
       labs(title = "Steps Over Time", x = "Date", y = "Step Count")
   })
   
-  # Mood Pie Chart (Specific Date)
-  output$mood_pie <- renderPlot({
+  # Mood Display
+  output$mood_display <- renderUI({
     mood_data <- data %>% filter(date == input$mood_date)
-    ggplot(mood_data, aes(x = "", fill = mood)) +
-      geom_bar(width = 1, stat = "count") +
-      coord_polar("y") +
-      labs(title = paste("Mood Distribution on", input$mood_date), fill = "Mood") +
-      theme_void()
+    if (nrow(mood_data) == 0) return("No data available")
+    mood <- mood_data$mood[1]
+    icon_name <- ifelse(mood == "Happy", "smile", ifelse(mood == "Neutral", "meh", "frown"))
+    tagList(icon(icon_name), strong(mood))
   })
   
   # Mood Pie Chart (Monthly)
   output$mood_monthly_pie <- renderPlot({
-    monthly_data <- data %>%
-      filter(format(date, "%Y-%m") == input$mood_month)
+    monthly_data <- data %>% filter(format(date, "%Y-%m") == input$mood_month)
     ggplot(monthly_data, aes(x = "", fill = mood)) +
       geom_bar(width = 1, stat = "count") +
       coord_polar("y") +
@@ -157,20 +157,18 @@ server <- function(input, output) {
       labs(title = "Hours of Sleep Over Time", x = "Date", y = "Hours of Sleep")
   })
   
-  # Activity Pie Chart (Specific Date)
-  output$activity_pie <- renderPlot({
+  # Activity Display
+  output$activity_display <- renderUI({
     activity_data <- data %>% filter(date == input$activity_date)
-    ggplot(activity_data, aes(x = "", fill = active)) +
-      geom_bar(width = 1, stat = "count") +
-      coord_polar("y") +
-      labs(title = paste("Activity Level on", input$activity_date), fill = "Activity") +
-      theme_void()
+    if (nrow(activity_data) == 0) return("No data available")
+    activity <- activity_data$active[1]
+    icon_name <- ifelse(activity == "Active", "running", "x")
+    tagList(icon(icon_name), strong(activity))
   })
   
   # Activity Pie Chart (Monthly)
   output$activity_monthly_pie <- renderPlot({
-    monthly_data <- data %>%
-      filter(format(date, "%Y-%m") == input$activity_month)
+    monthly_data <- data %>% filter(format(date, "%Y-%m") == input$activity_month)
     ggplot(monthly_data, aes(x = "", fill = active)) +
       geom_bar(width = 1, stat = "count") +
       coord_polar("y") +
