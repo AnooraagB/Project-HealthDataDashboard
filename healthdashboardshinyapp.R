@@ -30,7 +30,7 @@ dbDisconnect(con)
 
 # UI
 ui <- dashboardPage(
-  dashboardHeader(title = "Fitbit Dashboard"),
+  dashboardHeader(title = "Health Data Dashboard"),
   dashboardSidebar(
     sidebarMenu(
       menuItem("Home", tabName = "home", icon = icon("home")),  # Home menu item
@@ -47,9 +47,11 @@ ui <- dashboardPage(
       # Home Tab
       tabItem(tabName = "home", 
               fluidRow(
-                box(title = strong("Welcome to the Fitbit Health Data Dashboard"), width = 12, status = "primary",
-                    p("by MyName"),
-                    p("How to use:"),
+                box(title = strong("Welcome to the Health Data Dashboard"), width = 12, status = "primary",
+                    p("by Anooraag Basu"),
+                    p("MSc Bioinformatics student at The University of Edinburgh"),
+                    p("Digital Skills Specialists Edinburgh Award Project"),
+                    p(strong("How to use:")),
                     p("1. Use the menu on the left to navigate between different data views (Steps, Mood, Calories, Sleep, Activity)."),
                     p("2. Select the desired date range or specific date to filter the data."),
                     p("3. Visualizations will be updated dynamically based on your selections.")
