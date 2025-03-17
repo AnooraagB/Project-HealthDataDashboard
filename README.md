@@ -4,20 +4,22 @@ This project involves developing an interactive **Health Data Dashboard** using 
 
 ## Features
 
-* **Interactive data visualisations** : The dashboard uses various interactive visualisations to display health data, such as line graphs and pie charts.
-* **Data filters** : Users can filter data by date range for a more personalised experience.
+* **Interactive data visualisations** : The dashboard uses various interactive visualizations to display health data, such as line graphs and pie charts.
+* **Data filters** : Users can filter data by date range for a more personalized experience.
 * **Multiple health metrics** : Displays metrics such as steps, mood, calories burned, sleep hours, and activity levels.
-* **Shiny application** : A fully interactive User Interactive (UI) built using RShiny, enabling easy navigation between different health metrics.
+* **Shiny application** : A fully interactive User Interface (UI) built using RShiny, enabling easy navigation between different health metrics.
+* **Full data table** : Users can view the entire dataset in a table format, making it easy to explore all the data at once.
 
 ## Tools and Technologies Used
 
-* **R Programming** : The project is implemented using R for data manipulation and visualisation.
-* **RShiny** : Used to create an interactive web dashboard with various tabs and visualisations.
+* **R Programming** : The project is implemented using R for data manipulation and visualization.
+* **RShiny** : Used to create an interactive web dashboard with various tabs and visualizations.
 * **SQLite** : An SQLite database is used to store and manage health data efficiently.
 * **ggplot2** : Used for plotting line graphs and pie charts for the various health metrics.
 * **Shinydashboard** : Used for creating the layout of the dashboard with menus, boxes, and tabs.
 * **dplyr** : Used for data manipulation and filtering within the Shiny application.
 * **lubridate** : Used for handling and formatting date-related data.
+* **DT** : Used to display the dataset in an interactive table format.
 
 ## Dataset used
 
@@ -40,6 +42,7 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
   * **UI layout**: The dashboard is organised into tabs, with each tab representing a different health metric.
   * **Date range filters** : Users can select date ranges or specific dates to view data for a selected period.
   * **Reactive data** : The app reacts to user inputs (such as date selection) and dynamically updates visualisations.
+  * **Full data table** : A new tab to display the complete Fitbit dataset in an interactive table format.
 
 ## Getting started
 * **Prerequisites**
@@ -70,8 +73,9 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
 
 ## Future plans
 
-* Update the colour-coding of the specific date range section of "mood" and "activity" tabs.
-* Explore other ways to improve UI and functionality of the dashboard.
+* Explore other ways to further improve UI and functionality of the dashboard.
+* Make dashboard adaptable to more datasets and data formats.
+* Use Artificial Intelligence (AI) and Machine Learning (ML) to provide personalised recommendations.
 * Suggestions for improvements and comments on the project are much appreciated.
 
 ### ________________
