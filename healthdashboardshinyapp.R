@@ -18,12 +18,12 @@ data <- dbGetQuery(con, "SELECT * FROM fit_data")
 colnames(data) <- gsub("^#", "", colnames(data))
 
 # Convert the date column properly
-data$date <- as.character(data$date)  # Ensure it's character first
-data$date <- as.Date(data$date, format="%d-%m-%Y")  # Convert to Date
+data$date <- as.character(data$date)
+data$date <- as.Date(data$date, format="%d-%m-%Y")
 
 # Get min and max dates
-min_date <- min(data$date)
-max_date <- max(data$date)
+min_date <- min(data$date, na.rm = TRUE)
+max_date <- max(data$date, na.rm = TRUE)
 
 # Close the database connection
 dbDisconnect(con)
@@ -33,28 +33,28 @@ ui <- dashboardPage(
   dashboardHeader(title = "Health Data Dashboard"),
   dashboardSidebar(
     sidebarMenu(
-      menuItem("Home", tabName = "home", icon = icon("home")),  # Home menu item
+      menuItem("Home", tabName = "home", icon = icon("home")),
       menuItem("Steps", tabName = "steps", icon = icon("shoe-prints")),
       menuItem("Mood", tabName = "mood", icon = icon("smile")),
       menuItem("Calories", tabName = "calories", icon = icon("fire")),
       menuItem("Hours of Sleep", tabName = "sleep", icon = icon("bed")),
       menuItem("Activity", tabName = "activity", icon = icon("running")),
-      menuItem("Full Data", tabName = "full_data", icon = icon("database"))  # Full data menu item
+      menuItem("Full Data", tabName = "full_data", icon = icon("database")),
+      menuItem("About", tabName = "about", icon = icon("info-circle"))
     )
   ),
   dashboardBody(
     tabItems(
       # Home Tab
-      tabItem(tabName = "home", 
+      tabItem(tabName = "home",
               fluidRow(
                 box(title = strong("Welcome to the Health Data Dashboard"), width = 12, status = "primary",
-                    p("by Anooraag Basu"),
-                    p("MSc Bioinformatics student at The University of Edinburgh"),
+                    p("by ", strong("Anooraag Basu")),
                     p("Digital Skills Specialists Edinburgh Award Project"),
                     p(strong("How to use:")),
-                    p("1. Use the menu on the left to navigate between different data views (Steps, Mood, Calories, Sleep, Activity)."),
+                    p("1. Use the menu on the left to navigate between different data views."),
                     p("2. Select the desired date range or specific date to filter the data."),
-                    p("3. Visualizations will be updated dynamically based on your selections.")
+                    p("3. Visualisations will be updated dynamically based on your selections.")
                 )
               )
       ),
@@ -124,11 +124,25 @@ ui <- dashboardPage(
                 )
               )
       ),
-      # Full Data Tab (New)
+      # Full Data Tab
       tabItem(tabName = "full_data",
               fluidRow(
                 box(title = "Full Fitbit Data", width = 12, status = "primary",
-                    DTOutput("full_data_table")  # Display the data in a table
+                    DTOutput("full_data_table")
+                )
+              )
+      ),
+      # About Tab
+      tabItem(tabName = "about",
+              fluidRow(
+                box(title = strong("About"), width = 12, status = "primary",
+                    p(strong("About Me")),
+                    p("Hello, I am Anooraag Basu, a Master of Science in Bioinformatics student at The University of Edinburgh."),
+                    p(strong("About Health Data Dashboard")),
+                    p("This dashboard was designed using R, SQL, and RShiny as part of my Digital Skills Specialists Edinburgh Award."),
+                    p(strong("About the Digital Skills Specialists Edinburgh Award")),
+                    p("It is a self-development program run by The University of Edinburgh to enhance digital skills."),
+                    p("Learn more: ", a("Click here", href="https://information-services.ed.ac.uk/help-consultancy/is-skills/edinburgh-award/digital-skills-specialists", target="_blank"))
                 )
               )
       )
@@ -202,7 +216,7 @@ server <- function(input, output) {
   
   # Full Data Table
   output$full_data_table <- renderDT({
-    datatable(data)  # Display the entire data in a table format
+    datatable(data)
   })
 }
 
