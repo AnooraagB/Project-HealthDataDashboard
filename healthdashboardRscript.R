@@ -2,6 +2,7 @@ library(readr)
 library(RSQLite)
 library(DBI)
 
+# Change or set working directory to the folder with input data
 data_file <- "fit.txt"
 
 data <- read_delim(data_file, delim = "\t")
