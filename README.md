@@ -48,10 +48,10 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
 
 ## Files
 
-* **healthdashboardRscript.R**
+* **healthdashboardRscript.R** <br />
 Contains the code for establishing a connection to the SQLite database, performing queries, and managing the health data. This file interacts with the database to fetch and prepare data for use in the dashboard.
 
-* **healthdashboardshinyapp.R**
+* **healthdashboardshinyapp.R** <br />
 The main Shiny application file, containing the UI and server logic for the interactive dashboard. It uses the SQLite database to read data, summarise it, generates various plots, and includes the export functionality to download filtered data as CSV.
 
 ## Getting started
@@ -83,7 +83,7 @@ The main Shiny application file, containing the UI and server logic for the inte
   ```
   Replace "path/to/your/project" with the actual path where you have cloned the project folder.
   * If you are using RStudio, you can navigate to the directory where the project is located through "Set Working Direcroty" available under "Session".
-* **Using the dashboard:
+* **Using the dashboard**
   * Once the app is running, use the sidebar menu to navigate through different tabs such as "Summary," "Steps," "Mood," "Calories," "Sleep," "Activity," "Full Data," "Export", and "About".
   * You can filter data by date range, view various health metrics over time, and export filtered data.
   * The Shiny application will launch in your default web browser. You should see the Health Data Dashboard with all the interactive features ready to use.
