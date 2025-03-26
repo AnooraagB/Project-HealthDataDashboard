@@ -4,6 +4,10 @@ This project involves developing an interactive **Health Data Dashboard** using 
 
 It is aimed towards helping the user take an informed approach to their health and lifestyle choices, helping improve **Health Literacy**.
 
+## Video Demonstartion
+
+https://github.com/user-attachments/assets/952c6813-c965-40c8-b673-80a0818e68a3
+
 ## Features
 
 * **Interactive data visualisations** : The dashboard uses various interactive visualizations to display health data, such as line graphs and pie charts.
