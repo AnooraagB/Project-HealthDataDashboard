@@ -14,9 +14,6 @@ con <- dbConnect(RSQLite::SQLite(), "healthdashboard.db")
 # Read data from SQLite database
 data <- dbGetQuery(con, "SELECT * FROM fit_data")
 
-# Ensure column names are correct
-colnames(data) <- gsub("^#", "", colnames(data))
-
 # Convert the date column properly
 data$date <- as.character(data$date)
 data$date <- as.Date(data$date, format="%d-%m-%Y")
@@ -28,7 +25,7 @@ max_date <- max(data$date, na.rm = TRUE)
 # Close the database connection
 dbDisconnect(con)
 
-# UI
+# User Interface (UI)
 ui <- dashboardPage(
   dashboardHeader(title = "Health Data Dashboard"),
   
@@ -39,16 +36,17 @@ ui <- dashboardPage(
       menuItem("Steps", tabName = "steps", icon = icon("shoe-prints")),
       menuItem("Mood", tabName = "mood", icon = icon("smile")),
       menuItem("Calories", tabName = "calories", icon = icon("fire")),
-      menuItem("Hours of Sleep", tabName = "sleep", icon = icon("bed")),
+      menuItem("Hours of sleep", tabName = "sleep", icon = icon("bed")),
       menuItem("Activity", tabName = "activity", icon = icon("running")),
-      menuItem("Full Data", tabName = "full_data", icon = icon("database")),
+      menuItem("Full data", tabName = "full_data", icon = icon("database")),
+      menuItem("Export", tabName = "export", icon = icon("download")),
       menuItem("About", tabName = "about", icon = icon("info-circle"))
     )
   ),
   
   dashboardBody(
     tabItems(
-      # Home Tab
+      # Home tab
       tabItem(tabName = "home",
               fluidRow(
                 box(title = strong("WELCOME TO THE HEALTH DATA DASHBOARD"), width = 12, status = "primary",
@@ -61,6 +59,7 @@ ui <- dashboardPage(
                 )
               )
       ),
+      # Summary tab
       tabItem(tabName = "summary",
               fluidRow(
                 valueBoxOutput("total_steps"),
@@ -70,7 +69,7 @@ ui <- dashboardPage(
                 valueBoxOutput("active_days")
               )
       ),
-      # Steps Tab
+      # Steps tab
       tabItem(tabName = "steps",
               fluidRow(
                 box(title = strong("STEPS OVER TIME"), width = 12, status = "primary",
@@ -80,7 +79,7 @@ ui <- dashboardPage(
                     plotOutput("steps_plot"))
               )
       ),
-      # Mood Tab
+      # Mood tab
       tabItem(tabName = "mood",
               fluidRow(
                 box(title = strong("MOOD ON SELECTED DATE"), width = 12, status = "primary",
@@ -98,7 +97,7 @@ ui <- dashboardPage(
                 )
               )
       ),
-      # Calories Tab
+      # Calories tab
       tabItem(tabName = "calories",
               fluidRow(
                 box(title = strong("CALORIES BURNED OVER TIME"), width = 12, status = "primary",
@@ -108,7 +107,7 @@ ui <- dashboardPage(
                     plotOutput("calories_plot"))
               )
       ),
-      # Hours of Sleep Tab
+      # Hours of sleep tab
       tabItem(tabName = "sleep",
               fluidRow(
                 box(title = strong("HOURS OF SLEEP OVER TIME"), width = 12, status = "primary",
@@ -118,7 +117,7 @@ ui <- dashboardPage(
                     plotOutput("sleep_plot"))
               )
       ),
-      # Activity Tab
+      # Activity tab
       tabItem(tabName = "activity",
               fluidRow(
                 box(title = strong("ACTIVITY ON SELECTED DATE"), width = 12, status = "primary",
@@ -136,7 +135,7 @@ ui <- dashboardPage(
                 )
               )
       ),
-      # Full Data Tab
+      # Full data tab
       tabItem(tabName = "full_data",
               fluidRow(
                 box(title = strong("FULL DATA"), width = 12, status = "primary",
@@ -144,7 +143,23 @@ ui <- dashboardPage(
                 )
               )
       ),
-      # About Tab
+      # Export tab
+      tabItem(tabName = "export",
+              fluidRow(
+                box(title = strong("FILTER AND EXPORT DATA"), width = 12, status = "primary",
+                    selectInput("mood_filter", "Filter by Mood:", choices = c("All", unique(data$mood)), selected = "All"),
+                    selectInput("activity_filter", "Filter by Activity:", choices = c("All", unique(data$active)), selected = "All"),
+                    sliderInput("step_filter", "Filter by Step Count:", min = min(data$step_count), max = max(data$step_count),
+                                value = c(min(data$step_count), max(data$step_count))),
+                    DTOutput("filtered_data_table")
+                ),
+                # Download button
+                box(title = strong("DOWNLOAD FILTERED DATA"), width = 12, status = "primary",
+                    downloadButton("download_data", "Download Filtered Data")
+                )
+              )
+      ),
+      # About tab
       tabItem(tabName = "about",
               fluidRow(
                 box(title = strong("ABOUT"), width = 12, status = "primary",
@@ -153,9 +168,15 @@ ui <- dashboardPage(
                     p(strong("For more projects visit:  " ), tags$br(), icon("github"), a("Anooraag Basu on GitHub", href="https://github.com/AnooraagB", target="_blank")),
                     p(strong("For more on bioinformatics, student life, and experiences visit:  "), tags$br(), icon("linkedin"), a("Anooraag Basu on LinkedIn", href="https://www.linkedin.com/in/anooraagbasu/", target="_blank")),
                     p(tags$br(), strong("ABOUT THE HEALTH DATA DASHBOARD")),
-                    p("This dashboard is designed using R, SQL, and RShiny as part of my Digital Skills Specialists Edinburgh Award."),
+                    tags$ol(
+                      tags$li("This dashboard is designed using R, SQL, and RShiny as part of my Digital Skills Specialists Edinburgh Award project."),
+                      tags$li("It aims to enable users to take an informed approach to their health and lifestyle choices, helping promote health literacy."),
+                      tags$li("It helps promote a major challenge in today's world : ", strong("Health literacy")),
+                      tags$li(strong("According to the National Health Service (NHS)"), ":"),
+                      p("Health literacy refers to the personal characteristics and social resources needed for individuals and communities", tags$br(), "to access, understand, appraise, and use information and services to make decisions about health.")
+                    ),
                     p(tags$br(), strong("ABOUT THE DIGITAL SKILLS SPECIALISTS EDINBURGH AWARD")),
-                    p("It is a self-development program run by The University of Edinburgh to enhance digital skills."),
+                    p("It is a self-development programme run by The University of Edinburgh to enhance digital skills."),
                     p(strong("For more information visit:  "), tags$br(), icon("external-link-alt"), a("Digital Skills Specialists Edinburgh Award Website", href="https://information-services.ed.ac.uk/help-consultancy/is-skills/edinburgh-award/digital-skills-specialists", target="_blank"))
                 )
               )
@@ -163,6 +184,7 @@ ui <- dashboardPage(
     )
   )
 )
+
 # Server
 server <- function(input, output) {
   
@@ -189,7 +211,7 @@ server <- function(input, output) {
     valueBox(paste0(active_percentage, "%"), "Active Days", icon = icon("running"), color = "green")
   })
   
-  # Steps Plot
+  # Steps
   output$steps_plot <- renderPlot({
     filtered_data <- data %>%
       filter(date >= input$steps_date[1] & date <= input$steps_date[2])
@@ -200,7 +222,7 @@ server <- function(input, output) {
       theme_minimal()
   })
   
-  # Mood Display
+  # Mood by specific date
   output$mood_display <- renderUI({
     selected_mood_data <- data %>%
       filter(date == input$mood_date)
@@ -212,7 +234,7 @@ server <- function(input, output) {
     }
   })
   
-  # Mood Monthly Pie
+  # Mood by month
   output$mood_monthly_pie <- renderPlot({
     selected_month_data <- data %>%
       filter(format(date, "%Y-%m") == input$mood_month)
@@ -224,7 +246,7 @@ server <- function(input, output) {
       theme_void()
   })
   
-  # Calories Plot
+  # Calories burned
   output$calories_plot <- renderPlot({
     filtered_data <- data %>%
       filter(date >= input$calories_date[1] & date <= input$calories_date[2])
@@ -235,7 +257,7 @@ server <- function(input, output) {
       theme_minimal()
   })
   
-  # Sleep Plot
+  # Hours of sleep
   output$sleep_plot <- renderPlot({
     filtered_data <- data %>%
       filter(date >= input$sleep_date[1] & date <= input$sleep_date[2])
@@ -246,7 +268,7 @@ server <- function(input, output) {
       theme_minimal()
   })
   
-  # Activity Display
+  # Activity based on specific date
   output$activity_display <- renderUI({
     activity_data <- data %>% filter(date == input$activity_date)
     if (nrow(activity_data) == 0) return("No data available")
@@ -255,7 +277,7 @@ server <- function(input, output) {
     tagList(icon(icon_name), strong(activity))
   })
   
-  # Activity Pie Chart (Monthly)
+  # Activity based on month
   output$activity_monthly_pie <- renderPlot({
     monthly_data <- data %>% filter(format(date, "%Y-%m") == input$activity_month)
     ggplot(monthly_data, aes(x = "", fill = active)) +
@@ -265,10 +287,39 @@ server <- function(input, output) {
       theme_void()
   })
   
-  # Full Data Table
+  # Full data table
   output$full_data_table <- renderDT({
     datatable(data, options = list(pageLength = 10))
   })
+  
+  #Export
+  output$filtered_data_table <- renderDT({
+    filtered_data <- data
+    if (input$mood_filter != "All") {
+      filtered_data <- filtered_data %>% filter(mood == input$mood_filter)
+    }
+    if (input$activity_filter != "All") {
+      filtered_data <- filtered_data %>% filter(active == input$activity_filter)
+    }
+    filtered_data <- filtered_data %>% filter(step_count >= input$step_filter[1] & step_count <= input$step_filter[2])
+    # Set rows per page
+    datatable(filtered_data, options = list(pageLength = 5))
+  })
+  
+  output$download_data <- downloadHandler(
+    filename = function() { "filtered_health_data.csv" },
+    content = function(file) {
+      filtered_data <- data
+      if (input$mood_filter != "All") {
+        filtered_data <- filtered_data %>% filter(mood == input$mood_filter)
+      }
+      if (input$activity_filter != "All") {
+        filtered_data <- filtered_data %>% filter(active == input$activity_filter)
+      }
+      filtered_data <- filtered_data %>% filter(step_count >= input$step_filter[1] & step_count <= input$step_filter[2])
+      write.csv(filtered_data, file, row.names = FALSE)
+    }
+  )
 }
 
 # Run the application
