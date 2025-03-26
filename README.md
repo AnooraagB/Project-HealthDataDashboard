@@ -1,14 +1,18 @@
 # Health Data Dashboard
  
-This project involves developing an interactive **Health Data Dashboard** using R, RShiny, and SQLite. The dashboard visualises various health metrics like steps, mood, calories burned, sleep hours, and activity levels, based on Fitbit data.
+This project involves developing an interactive **Health Data Dashboard** using R, RShiny, and SQLite. The dashboard visualises various health metrics like steps, mood, calories burned, sleep hours, and activity levels, based on Fitbit health data.
+
+It is aimed towards helping the user take an informed approach to their health and lifestyle choices, helping imporve **Health Literacy**.
 
 ## Features
 
 * **Interactive data visualisations** : The dashboard uses various interactive visualizations to display health data, such as line graphs and pie charts.
-* **Data filters** : Users can filter data by date range for a more personalized experience.
+* **Data filters** : Users can filter data by date range for a more personalised experience.
 * **Multiple health metrics** : Displays metrics such as steps, mood, calories burned, sleep hours, and activity levels.
 * **Shiny application** : A fully interactive User Interface (UI) built using RShiny, enabling easy navigation between different health metrics.
+* **Visual summary** : Provides a visual summary of key insights of the various health metrics from the data used.
 * **Full data table** : Users can view the entire dataset in a table format, making it easy to explore all the data at once.
+* **Data export** : Users can export filtered health data into a CSV format.
 
 ## Tools and Technologies Used
 
@@ -18,17 +22,17 @@ This project involves developing an interactive **Health Data Dashboard** using 
 * **ggplot2** : Used for plotting line graphs and pie charts for the various health metrics.
 * **Shinydashboard** : Used for creating the layout of the dashboard with menus, boxes, and tabs.
 * **dplyr** : Used for data manipulation and filtering within the Shiny application.
-* **lubridate** : Used for handling and formatting date-related data.
 * **DT** : Used to display the dataset in an interactive table format.
+* **DBI** : Used for database interaction to read data from SQLite.
 
 ## Dataset used
 
 The data is stored in a tab-delimited file (fit.txt) and then imported into an SQLite database (healthdashboard.db) for efficient querying and manipulation and the dataset used in this project is a Fitbit data file obtained from Kaggle (https://www.kaggle.com/datasets/devarajv88/fitbit-dataset), including various health metrics such as:
 1. Steps
-2. Mood
+2. Mood (Happy, Neutral, Sad)
 3. Calories burned
 4. Hours of sleep
-5. Activity levels
+5. Activity levels (Active or Inactive)
 
 ## Concepts used
 
@@ -40,9 +44,15 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
   * **Pie charts** : Used to visualise the distribution of mood and activity levels.
 * **Shiny UI and server**
   * **UI layout**: The dashboard is organised into tabs, with each tab representing a different health metric.
-  * **Date range filters** : Users can select date ranges or specific dates to view data for a selected period.
   * **Reactive data** : The app reacts to user inputs (such as date selection) and dynamically updates visualisations.
-  * **Full data table** : A new tab to display the complete Fitbit dataset in an interactive table format.
+
+## Files
+
+* **healthdashboardRscript.R**
+Contains the code for establishing a connection to the SQLite database, performing queries, and managing the health data. This file interacts with the database to fetch and prepare data for use in the dashboard.
+
+* **healthdashboardshinyapp.R**
+The main Shiny application file, containing the UI and server logic for the interactive dashboard. It uses the SQLite database to read data, summarise it, generates various plots, and includes the export functionality to download filtered data as CSV.
 
 ## Getting started
 * **Prerequisites**
@@ -56,20 +66,27 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
     * ggplot2
     * DT
     * shinydashboard
-    * shinyWidgets
-    * lubridate
     * dplyr
   * To install these packages, use the following code :
     ```
-    install.packages(c("readr", "RSQLite", "DBI", "shiny", "ggplot2", "DT", "shinydashboard", "shinyWidgets", "lubridate", "dplyr"))
+    install.packages(c("readr", "RSQLite", "DBI", "shiny", "ggplot2", "DT", "shinydashboard", "dplyr"))
     ```
-* **Running the dashboard**
-  * Clone the repository to your local machine.
-  * Place the fit.txt data file in the project directory.
-  * Run the following code to launch the Shiny application :
+* **Launch the Shiny application**
+  * Clone the repository to your local machine or download the files :
+  ```
+  git clone https://github.com/AnooraagB/Project-Health-Data-Dashboard.git
+  ```
+  * Ensure that the input data file (fit.txt) is placed in the same directory as the Shiny application (healthdashboardshinyapp.R) or adjust the file path accordingly in the code.
+  * After installing the packages and placing the data file, you can run the Shiny app using the shiny::runApp() function. In the R console, use the following command :
   ```
   shiny::runApp("path/to/your/project")
   ```
+  Replace "path/to/your/project" with the actual path where you have cloned the project folder.
+  * If you are using RStudio, you can navigate to the directory where the project is located through "Set Working Direcroty" available under "Session".
+* **Using the dashboard:
+  * Once the app is running, use the sidebar menu to navigate through different tabs such as "Summary," "Steps," "Mood," "Calories," "Sleep," "Activity," "Full Data," "Export", and "About".
+  * You can filter data by date range, view various health metrics over time, and export filtered data.
+  * The Shiny application will launch in your default web browser. You should see the Health Data Dashboard with all the interactive features ready to use.
 
 ## Future plans
 
