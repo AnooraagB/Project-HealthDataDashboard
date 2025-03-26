@@ -20,8 +20,8 @@ https://github.com/user-attachments/assets/952c6813-c965-40c8-b673-80a0818e68a3
 
 ## Tools and Technologies Used
 
-* **R Programming** : The project is implemented using R for data manipulation and visualization.
-* **RShiny** : Used to create an interactive web dashboard with various tabs and visualizations.
+* **R Programming** : The project is implemented using R for data manipulation and visualisation.
+* **RShiny** : Used to create an interactive web dashboard with various tabs and visualisations.
 * **SQLite** : An SQLite database is used to store and manage health data efficiently.
 * **ggplot2** : Used for plotting line graphs and pie charts for the various health metrics.
 * **Shinydashboard** : Used for creating the layout of the dashboard with menus, boxes, and tabs.
@@ -42,7 +42,7 @@ The data is stored in a tab-delimited file (fit.txt) and then imported into an S
 
 * **Data Handling with SQLite and R**
   * **SQLite** : The data is imported from a tab-delimited file into an SQLite database. This allows efficient querying of the data for use within the Shiny application.
-  * **R data frames** : Data is retrieved from the SQLite database and stored in R data frames for analysis and visualization.
+  * **R data frames** : Data is retrieved from the SQLite database and stored in R data frames for analysis and visualisation.
 * **Data visualisation with ggplot2**
   * **Line plots** : Used to display the trend of steps, calories burned, and hours of sleep over time.
   * **Pie charts** : Used to visualise the distribution of mood and activity levels.
