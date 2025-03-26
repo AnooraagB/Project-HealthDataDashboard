@@ -2,7 +2,7 @@
  
 This project involves developing an interactive **Health Data Dashboard** using R, RShiny, and SQLite. The dashboard visualises various health metrics like steps, mood, calories burned, sleep hours, and activity levels, based on Fitbit health data.
 
-It is aimed towards helping the user take an informed approach to their health and lifestyle choices, helping imporve **Health Literacy**.
+It is aimed towards helping the user take an informed approach to their health and lifestyle choices, helping improve **Health Literacy**.
 
 ## Features
 
