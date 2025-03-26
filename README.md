@@ -10,7 +10,7 @@ https://github.com/user-attachments/assets/952c6813-c965-40c8-b673-80a0818e68a3
 
 ## Features
 
-* **Interactive data visualisations** : The dashboard uses various interactive visualizations to display health data, such as line graphs and pie charts.
+* **Interactive data visualisations** : The dashboard uses various interactive visualisations to display health data, such as line graphs and pie charts.
 * **Data filters** : Users can filter data by date range for a more personalised experience.
 * **Multiple health metrics** : Displays metrics such as steps, mood, calories burned, sleep hours, and activity levels.
 * **Shiny application** : A fully interactive User Interface (UI) built using RShiny, enabling easy navigation between different health metrics.
